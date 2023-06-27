@@ -28,7 +28,7 @@ export default function Home() {
           </button>
         </div>
         <div></div>
-        <Image src='/Frame.png' alt="Landing frame" width={450} height={350} />
+        <Image src='/Frame.png' alt="Landing frame" width={450} height={350} priority={false}/>
       </div>
       <br/>
       <div className={`${styles.intro}`}>

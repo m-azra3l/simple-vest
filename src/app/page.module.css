@@ -278,8 +278,8 @@
     margin-top: 70px;
   }
   .intro img{
-    width: 300;
-    height: 200;
+    width: auto;
+    height: auto;
   }
 
   .card {
