@@ -1,5 +1,5 @@
 import styles from './addstakeholder.module.css';
-import { PlusCircleIcon } from "@heroicons/react/24/solid";
+import { UserPlusIcon } from "@heroicons/react/24/solid";
 
 export default function AddStakeholder() {
   const handleSubmit = async (e) => {
@@ -36,8 +36,15 @@ export default function AddStakeholder() {
             required
             className={styles.input}
           />
+          <small>Vesting End Date</small>
+          <input
+            type="date"
+            placeholder="Duration"
+            required
+            className={styles.input}
+          />
           <div className={styles.flex_sm}>
-            <button className={`${styles.button} ${styles.btn} ${styles.btn_dark}`}>Add <PlusCircleIcon width={20} /></button>
+            <button className={`${styles.button} ${styles.btn} ${styles.btn_dark}`}>Add <UserPlusIcon  width={20} /></button>
             {/* {error && error} */}
           </div>
         </form>

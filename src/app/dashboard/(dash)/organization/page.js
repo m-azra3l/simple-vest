@@ -8,8 +8,14 @@ import styles from './page.module.css'
 export default function Organization() {
 
     return (
-        <div style={{minHeight:'100vh',  paddingBottom:'0px' }}>
+        <div style={{ minHeight: '100vh', paddingBottom: '0px' }}>
             <div className={styles.main}>
+                <center>
+                    <h2>
+                        Welcome, <span className={styles.accent}>User</span>
+                    </h2>
+                    <br/>  
+                </center>
                 <center><AddStakeholder /></center>
             </div>
             <div >

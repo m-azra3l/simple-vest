@@ -1,5 +1,5 @@
 import styles from './stakeholders.module.css';
-import { BanknotesIcon } from "@heroicons/react/24/solid";
+import { PlusCircleIcon } from "@heroicons/react/24/solid";
 
 export default function Stakeholders() {
     return (
@@ -19,7 +19,7 @@ export default function Stakeholders() {
                     <small>Hello</small>
                 </div>
                 <div className={styles.flex_sm}>
-                    <button type='submit' className={`${styles.button} ${styles.btn} ${styles.btn_dark}`}>Whitelist <BanknotesIcon width={20} /></button>
+                    <button type='submit' className={`${styles.button} ${styles.btn} ${styles.btn_dark}`}>Whitelist <PlusCircleIcon width={20} /></button>
                 </div>
             </div>
             <div className={styles.stakeholder}>
@@ -37,7 +37,7 @@ export default function Stakeholders() {
                     <small>Hello</small>
                 </div>
                 <div className={styles.flex_sm}>
-                    <button type='submit' className={`${styles.button} ${styles.btn} ${styles.btn_dark}`}>Whitelist <BanknotesIcon width={20} /></button>
+                    <button type='submit' className={`${styles.button} ${styles.btn} ${styles.btn_dark}`}>Whitelist <PlusCircleIcon width={20} /></button>
                 </div>
             </div>
             <div className={styles.stakeholder}>
@@ -55,7 +55,7 @@ export default function Stakeholders() {
                     <small>Hello</small>
                 </div>
                 <div className={styles.flex_sm}>
-                    <button type='submit' className={`${styles.button} ${styles.btn} ${styles.btn_dark}`}>Whitelist <BanknotesIcon width={20} /></button>
+                    <button type='submit' className={`${styles.button} ${styles.btn} ${styles.btn_dark}`}>Whitelist <PlusCircleIcon width={20} /></button>
                 </div>
             </div>
         </div>
