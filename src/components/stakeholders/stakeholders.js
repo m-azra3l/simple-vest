@@ -1,7 +1,9 @@
 import styles from './stakeholders.module.css';
 import { PlusCircleIcon } from "@heroicons/react/24/solid";
+import { formatPercentage } from '@/contexts/helpers';
 
 export default function Stakeholders() {
+
     return (
         <div className={styles.grid}>
             <div className={styles.stakeholder}>
@@ -13,7 +15,7 @@ export default function Stakeholders() {
                     <small>Hello</small>
                     <small>Hello</small>
                 </div>
-                <progress max={100} value={100}></progress>
+                <progress max={100} value={10}>{formatPercentage(10/100)}</progress>
                 <div className={styles.progress_text}>
                     <small>Hello</small>
                     <small>Hello</small>

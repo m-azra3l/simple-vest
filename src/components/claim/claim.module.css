@@ -24,6 +24,27 @@
     -webkit-box-shadow: 0.25em 0.3em 1em hsl(var(--muted) / 0.2);
     box-shadow: 0.25em 0.3em 1em hsl(var(--muted) / 0.2);
 }
+
+.progress_text {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  -webkit-box-pack: justify;
+  -ms-flex-pack: justify;
+  justify-content: space-between;
+  gap: var(--space-lg);
+}
+
+.progress_text :nth-child(2) {
+  text-align: right;
+}
+
+.progress_text:nth-of-type(2) :nth-child(2) {
+  color: hsl(var(--muted));
+}
     
 .grid_xs {
   display: -ms-grid;
@@ -52,6 +73,8 @@
   display: grid;
   gap: var(--space-sm);
   background-color: var(--bkg);
+  --backdrop: var(--accent);
+  color: hsl(var(--backdrop));
   padding: var(--space-xl);
   border-radius: var(--round-lg);
   -webkit-box-shadow: 0.25em 0.3em 1em hsl(var(--muted) / 0.2);

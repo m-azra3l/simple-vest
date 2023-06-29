@@ -1,6 +1,6 @@
 'use client';
 
-import Tokens from "@/components/tokens/tokens";
+import Claim from "@/components/claim/claim";
 import styles from './page.module.css';
 import { useState } from 'react';
 
@@ -16,7 +16,7 @@ export default function Stakeholder() {
                 </div>
             </center>
             <center>
-                <Tokens />
+                <Claim />
             </center>
         </div>
     );

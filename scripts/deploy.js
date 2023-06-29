@@ -8,28 +8,24 @@
 const hre = require("hardhat");
 const fs = require('fs');
 
-// funtion to deploy the contracts
 async function main() {
+  const [deployer] = await hre.ethers.getSigners();
 
-  // // deploy the MarketPlace
-  // const MarketPlace = await hre.ethers.getContractFactory("MarketPlace");
-  // const nftMarketplace = await MarketPlace.deploy();
-  // await nftMarketplace.deployed();
-  // console.log("nftMarketplace deployed to:", nftMarketplace.address);
+  // Compile contracts (optional if already compiled)
+  await hre.run('compile');
 
-  // //deploy the NFT
-  // const NFT = await hre.ethers.getContractFactory("NFT");
-  // const nft = await NFT.deploy(nftMarketplace.address);
-  // await nft.deployed();
-  // console.log("nft deployed to:", nft.address);
+  // Deploy the Contract
+  const Vesting = await hre.ethers.getContractFactory('Vesting');
+  const vesting = await Vesting.deploy('Token', 'TKN');
+  await vesting.deployed();
+  console.log('Vesting contract deployed to:', vesting.address);
 
+  fs.writeFileSync(
+    './src/contexts/contractAddress.js', 
+  `export const vestingAddress = '${vesting.address}';`
+  );
 
-  // // export the addresses
-  // fs.writeFileSync('./config.js', `
-  //   export const marketplaceAddress = "${nftMarketplace.address}"
-  //   export const nftAddress = "${nft.address}"
-
-  // `)
+  console.log('Contract ABI and address exported successfully.');
 }
 
 main()
