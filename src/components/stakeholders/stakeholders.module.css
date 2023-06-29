@@ -77,6 +77,10 @@
     color: hsl(var(--muted));
 }
 
+.accent {
+  color: hsl(var(--accent));
+}
+
   /* links and buttons */
 
 :where(a, .btn) {

@@ -1,18 +1,34 @@
 'use client';
 import Image from 'next/image';
 import styles from './page.module.css';
+import { toast } from "react-toastify";
+import { useState } from 'react';
 import { UserPlusIcon } from "@heroicons/react/24/solid";
-import { useRouter } from "next/navigation";
+import { useRouter } from "next/router";
+import { connectContract } from '@/contexts/contractHelpers';
+import Link from 'next/link';
 
 export default function Home() {
+  const [connected, isConnected] = useState(false);
   const router = useRouter();
-  const handleClick = async () => {
-    router.push('/account/register');
-  }
+
+  async function handleClick() {
+    try {
+      const contract = await connectContract();
+      if (contract !== null || contract !== undefined) {
+        isConnected(true);
+        toast.success('Connected!');
+      }
+    }
+    catch (err) {
+      toast.error('Error');
+      console.error(err);
+    }
+  };
 
   return (
     <main className={styles.main}>
-      <div className={styles.intro} style={{marginTop:'70px',  paddingBottom:'0px' }}>
+      <div className={styles.intro} style={{ marginTop: '70px', paddingBottom: '0px' }}>
         <div>
           <h2 className={styles.accent}>
             Unleash the Power of Vesting
@@ -22,50 +38,47 @@ export default function Home() {
             Empower your blockchain projects with Neo-Vest&apos;s seamless and secure token vesting platform, ensuring fair and efficient distribution for ICOs and token sales.
           </p>
           <br />
-          <button type="submit" className={`${styles.btn} ${styles.btn_dark}`} onClick={handleClick}>
-            <span>Create Account</span>
+          <button type="submit" className={`${styles.btn} ${styles.btn_dark}`} onClick={handleClick} hidden={connected == true}>
+            <span>Connect</span>
             <UserPlusIcon width={20} />
           </button>
         </div>
         <div></div>
-        <Image src='/Frame.png' alt="Landing frame" width={450} height={350} priority={false}/>
+        <Image src='/Frame.png' alt="Landing frame" width={450} height={350} priority={false} />
       </div>
-      <br/>
-      <div className={`${styles.intro}`}>
-        <a
-          href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
+      <br />
+      <div className={`${styles.intro}`} hidden={connected == false}>
+        <Link
+          href={'/account/register'}
           className={styles.card}
-          target="_blank"
           rel="noopener noreferrer"
         >
           <center>
             <h3 className={styles.accent}>
-              Register/Login<span>-&gt;</span>
+              Register<span>-&gt;</span>
             </h3>
             <br />
             <p>Find in-depth information about Next.js features and API.</p>
           </center>
-        </a>
+        </Link>
 
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
+        <Link
+          href={'/account/login'}
           className={styles.card}
-          target="_blank"
           rel="noopener noreferrer"
         >
           <center>
             <h3 className={styles.accent}>
-              Create<span>-&gt;</span>
+              Login<span>-&gt;</span>
             </h3>
             <br />
             <p>Learn about Next.js in an interactive course with&nbsp;quizzes!</p>
           </center>
-        </a>
+        </Link>
 
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
+        <Link
+          href={'/account/login'}
           className={styles.card}
-          target="_blank"
           rel="noopener noreferrer"
         >
           <center>
@@ -75,9 +88,9 @@ export default function Home() {
             <br />
             <p>Explore the Next.js 13 playground.</p>
           </center>
-        </a>
+        </Link>
       </div>
-      <br/>
+      <br />
       <div id='about' className={styles.about} >
         <center>
           <h3 className={styles.accent}>About</h3>

@@ -138,6 +138,14 @@ contract Vesting is ERC20, ReentrancyGuard {
         owner.transfer(transactPrice);
     }
 
+    // Function to list current employees of an organization
+    function orgStakeholders(uint256 id)
+        public view
+        returns (uint256[] memory)
+    {
+        return organizations[id].stakeholders;
+    }
+
     // Create signin function
     function signin(string calldata email) public view returns (string memory accountType, address _address) {
         // checking the function caller's wallet address 
