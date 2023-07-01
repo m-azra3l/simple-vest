@@ -3,20 +3,22 @@
 import AddStakeholder from "@/components/addstakeholder/addstakeholder";
 import Stakeholders from "@/components/stakeholders/stakeholders";
 import styles from './page.module.css';
-import { useRouter } from "next/router";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useState, useEffect } from "react";
 import { toast } from "react-toastify";
 import { shortenAddress, getId, verifyOrg } from "@/contexts/contractHelpers";
 
 export default function Organization() {
     const router = useRouter();
-    const address = router.query;
+    const params = useSearchParams();
+    const address = params.get('id');
     const [orgId, setOrgId] = useState(null);
 
     useEffect(() => {
         (async () => {
             try {
-                const orgId = await getId(address);
+                let orgId = await getId(address);
+                orgId = parseInt(orgId); 
                 const org = await verifyOrg(orgId, address);
                 if (!org) {
                     toast.error('Wrong address');
@@ -46,10 +48,10 @@ export default function Organization() {
             </div>
             <div >
                 <center>
-                    <h3>
+                    <br/>
+                    <h3 className={styles.accent}>
                         Stakeholders
                     </h3>
-                    <br />
                     <Stakeholders orgId={orgId} />
                 </center>
             </div>

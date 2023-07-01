@@ -38,7 +38,6 @@ contract Vesting is ERC20, ReentrancyGuard {
         string role;    
         uint256 endTime;
         uint256 startTime;
-        uint256 vestingPeriod;
         uint256 tokenAmount;
         uint256 claimedToken;
         bool whitelisted;
@@ -84,7 +83,7 @@ contract Vesting is ERC20, ReentrancyGuard {
         organizations.push(org);     
         email_to_address[email] = orgAddress;
         address_to_id[orgAddress] = org.id;        
-        is_organization[msg.sender] = true;
+        is_organization[orgAddress] = true;
 
         // Transfer the transaction fee to the contract owner
         owner.transfer(transactPrice);
@@ -120,7 +119,6 @@ contract Vesting is ERC20, ReentrancyGuard {
             role : _role, 
             endTime : _endTime,
             startTime : block.timestamp,
-            vestingPeriod : block.timestamp.add(_endTime),
             tokenAmount : _tokenAmount,
             claimedToken : 0,
             whitelisted : false
@@ -132,7 +130,7 @@ contract Vesting is ERC20, ReentrancyGuard {
         
         organizations[_orgId].stakeholders.push(user.id);
 
-        emit CreatedStakeholder(block.timestamp, user.vestingPeriod);
+        emit CreatedStakeholder(block.timestamp, _endTime);
 
         // Transfer the transaction fee to the contract owner
         owner.transfer(transactPrice);
@@ -147,7 +145,7 @@ contract Vesting is ERC20, ReentrancyGuard {
     }
 
     // Create signin function
-    function signin(string calldata email) public view returns (string memory accountType, address _address) {
+    function signin(string calldata email) public view returns (string memory accountType) {
         // checking the function caller's wallet address 
         // from global map containing email address mapped to wallet address
         require(
@@ -157,13 +155,12 @@ contract Vesting is ERC20, ReentrancyGuard {
 
         if (is_organization[msg.sender]) {
             accountType = "organization";
-            _address = msg.sender;
-        } else {
+        } 
+        else {
             accountType = "stakeholder";
-            _address = msg.sender;
         }
 
-        return (accountType, _address);
+        return accountType;
     }
 
     function whitelistStakeholder(uint256 stakeholderId) external payable nonReentrant {
@@ -183,10 +180,10 @@ contract Vesting is ERC20, ReentrancyGuard {
     function claimTokens(uint256 amount, uint256 userId) public payable nonReentrant{
         require(msg.value == transactPrice, "Price must be equal to transaction price");
         require(stakeholders[userId].whitelisted = true, "You are not whitelisted");
-        require(block.timestamp >= stakeholders[userId].vestingPeriod, "Vesting period not over");
+        require(block.timestamp >= stakeholders[userId].endTime, "Vesting period not over");
         require(stakeholders[userId].tokenAmount >= amount, 
         "You can't claim more tokens than was vested");
-        _mint(stakeholders[userId].userAddress, amount);
+        _mint(msg.sender, amount);
         stakeholders[userId].tokenAmount -= amount;
         stakeholders[userId].claimedToken += amount;
 

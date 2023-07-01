@@ -1,14 +1,11 @@
 'use client';
-import vestingAbi from './contractAbi.js';
+import Vesting from './Vesting.json';
 import { vestingAddress } from './contractAddress';
 import { ethers } from 'ethers';
 import Web3Modal from 'web3modal';
 
 const shortenAddress = (strAddress) => {
-    let firstChars = strAddress.toString().substr(0, firstLength);
-    let lastChars = strAddress.toString().substr(-lastLength);
-
-    return firstChars + "..." + lastChars;
+    return strAddress.slice(0, 3) + "..." + strAddress.slice(-4)
 };
 
 const formatPercentage = (amt) => {
@@ -20,20 +17,30 @@ const formatPercentage = (amt) => {
 
 const connectContract = async () => {
     try {
-        // const web3Modal = new Web3Modal();
-        // const connection = await web3Modal.connect();
+        const web3Modal = new Web3Modal();
+        const connection = await web3Modal.connect();
         // const provider = new ethers.providers.JsonRpcProvider('https://rpc-mumbai.maticvigil.com');
-        const provider = new ethers.providers.JsonRpcProvider('http://127.0.0.1:8545/');
-        // const provider = new ethers.providers.Web3Provider(connection);
+        // const provider = new ethers.providers.JsonRpcProvider('http://127.0.0.1:8545/');
+        const provider = new ethers.providers.Web3Provider(connection);
         const signer = provider.getSigner();
-        const contract = new ethers.Contract(vestingAddress, vestingAbi, signer);
+        const contract = new ethers.Contract(vestingAddress, Vesting.abi, signer);
         return contract;
     }
     catch (error) {
-        console.log(error.message);
         throw new Error("Error", error);
     }
 };
+
+const getTransactPrice = async () => {
+    try {
+        const contract = await connectContract();
+        const price = await contract.getTransactPrice();
+        return price;
+    }
+    catch (error) {
+        throw new Error("Error", error);
+    }
+}
 
 const signUp = async (
     name,
@@ -42,7 +49,9 @@ const signUp = async (
     orgAddress) => {
     try {
         const contract = await connectContract();
-        const register = await contract.registerOrganization(name, symbol, email, orgAddress);
+        let price = await getTransactPrice();
+        price = price.toString();
+        const register = await contract.registerOrganization(name, symbol, email, orgAddress, { value: price });
         const receipt = await register.wait();
         if (receipt.status === 1) {
             return true;
@@ -50,7 +59,6 @@ const signUp = async (
         console.log(`Transaction hash: ${register.hash}`);
     }
     catch (error) {
-        console.log(error.message);
         throw new Error("Error", error);
     }
 };
@@ -58,11 +66,10 @@ const signUp = async (
 const signIn = async (email) => {
     try {
         const contract = await connectContract();
-        const [accountType, address] = await contract.signin(email);
-        return accountType, address;
+        const accountType = await contract.signin(email);
+        return accountType;
     }
     catch (error) {
-        console.log(error.message);
         throw new Error("Error", error);
     }
 };
@@ -76,8 +83,18 @@ const addStakeholder = async (
     orgId
 ) => {
     try {
+        let price = await getTransactPrice();
+        price = price.toString();
         const contract = await connectContract();
-        const stakeholder = await contract.addStakeholder(stakeholderAddress, role, endTime, tokenAmount, email, orgId);
+        const stakeholder = await contract.addStakeholder(
+            stakeholderAddress,
+            role,
+            endTime,
+            tokenAmount,
+            email,
+            orgId,
+            { value: price }
+        );
         const receipt = await stakeholder.wait();
         if (receipt.status === 1) {
             return true;
@@ -85,15 +102,16 @@ const addStakeholder = async (
         console.log(`Transaction hash: ${stakeholder.hash}`);
     }
     catch (error) {
-        console.log(error.message);
         throw new Error("Error", error);
     }
 };
 
 const whitelist = async (userId) => {
     try {
+        let price = await getTransactPrice();
+        price = price.toString();
         const contract = await connectContract();
-        const whitelistUser = await contract.whitelistStakeholder(userId);
+        const whitelistUser = await contract.whitelistStakeholder(userId, { value: price });
         const receipt = await whitelistUser.wait();
         if (receipt.status === 1) {
             return true;
@@ -101,15 +119,16 @@ const whitelist = async (userId) => {
         console.log(`Transaction hash: ${whitelistUser.hash}`);
     }
     catch (error) {
-        console.log(error.message);
         throw new Error("Error", error);
     }
 };
 
 const claimToken = async (amount, userId) => {
     try {
+        let price = await getTransactPrice();
+        price = price.toString();
         const contract = await connectContract();
-        const claim = await contract.claimTokens(amount, userId);
+        const claim = await contract.claimTokens(amount, userId, { value: price });
         const receipt = await claim.wait();
         if (receipt.status === 1) {
             return true;
@@ -117,7 +136,6 @@ const claimToken = async (amount, userId) => {
         console.log(`Transaction hash: ${claim.hash}`);
     }
     catch (error) {
-        console.log(error.message);
         throw new Error("Error", error);
     }
 };
@@ -126,11 +144,9 @@ const getId = async (address) => {
     try {
         const contract = await connectContract();
         const id = await contract.address_to_id(address);
-        id.wait();
         return id;
     }
     catch (error) {
-        console.log(error.message);
         throw new Error("Error", error);
     }
 };
@@ -139,24 +155,23 @@ const getUser = async (userId) => {
     try {
         const contract = await connectContract();
         const user = await contract.stakeholders(userId);
-        const sDate = new Date(user.startTime, 10);
-        const startDate = sDate.toDateString();
-        const eDate = new Date(user.endTime, 10);
-        const endDate = new eDate.toDateString();
+        const token = parseInt(user.tokenAmount);
+        const claimed = parseInt(user.claimedToken);
+        const total = token + claimed;
         const userData = {
-            id: user.id,
+            id: parseInt(user.id),
+            orgId: parseInt(user.orgId),
             role: user.role,
-            endTime: endDate,
-            startTime: startDate,
-            tokenAmount: user.tokenAmount,
-            claimedToken: user.claimedToken,
-            totalToken: user.tokenAmount + user.claimedToken,
+            tokenAmount: token,
+            claimedToken: claimed,
+            totalToken: total,
+            startDate: parseInt(user.startTime),
+            vestEnd: parseInt(user.endTime),
             whitelisted: user.whitelisted
         }
         return userData;
     }
     catch (error) {
-        console.log(error.message);
         throw new Error("Error", error);
     }
 };
@@ -170,9 +185,9 @@ const getUserOrg = async (orgId) => {
             symbol: org.symbol
         }
         return orgData;
+        console.log(orgData);
     }
     catch (error) {
-        console.log(error.message);
         throw new Error("Error", error);
     }
 };
@@ -186,7 +201,6 @@ const verifyUser = async (userId, userAddress) => {
         }
     }
     catch (error) {
-        console.log(error.message);
         throw new Error("Error", error);
     }
 };
@@ -202,7 +216,6 @@ const getOrg = async (orgId) => {
         return orgData;
     }
     catch (error) {
-        console.log(error.message);
         throw new Error("Error", error);
     }
 };
@@ -216,7 +229,6 @@ const verifyOrg = async (orgId, orgAddress) => {
         }
     }
     catch (error) {
-        console.log(error.message);
         throw new Error("Error", error);
     }
 };
@@ -225,32 +237,40 @@ const getOrgStakeholders = async (orgId) => {
     try {
         const contract = await connectContract();
         const orgUsers = await contract.orgStakeholders(orgId);
-        const orgStakeholders = [];
+        let orgStakeholders = [];
         for (let i = 0; i < orgUsers.length; i++) {
             const user = await contract.stakeholders(orgUsers[i]);
-            const sDate = new Date(user.startTime, 10);
-            const startDate = sDate.toDateString();
-            const eDate = new Date(user.endTime, 10);
-            const endDate = new eDate.toDateString();
+            const token = parseInt(user.tokenAmount);
+            const claimed = parseInt(user.claimedToken);
+            const total = token + claimed;
             orgStakeholders.push({
-                id: user.id,
+                id: parseInt(user.id),
                 role: user.role,
                 address: user.userAddress,
-                endTime: endDate,
-                startTime: startDate,
-                tokenAmount: user.tokenAmount,
-                claimedToken: user.claimedToken,
-                totalToken: user.tokenAmount + user.claimedToken,
+                tokenAmount: token,
+                claimedToken: claimed,
+                totalToken: total,
                 whitelisted: user.whitelisted
             });
         }
         return orgStakeholders;
     }
-    catch (err) {
-        console.log(error.message);
+    catch (error) {
         throw new Error("Error", error);
     }
 };
+
+// const getAddress = async () => {
+//     try {
+//         const contract = await connectContract();
+//         const signer = await contract.signer.getAddress();
+//         console.log(signer);
+//         return signer;
+//     }
+//     catch (err) {
+//         throw new Error("Error", error);
+//     }
+// };
 
 export {
     shortenAddress,
@@ -268,4 +288,4 @@ export {
     getOrg,
     verifyOrg,
     getOrgStakeholders
-}
+};

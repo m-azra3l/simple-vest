@@ -2,8 +2,8 @@
   "_format": "hh-sol-cache-2",
   "files": {
     "C:\\Users\\gadre\\Documents\\GitHub\\simple-vest\\contracts\\Vesting.sol": {
-      "lastModificationDate": 1688036621867,
-      "contentHash": "c8d542c2c220e4666b225fa8dd688b45",
+      "lastModificationDate": 1688129687236,
+      "contentHash": "87ab74397c5a8f919c47c3814b0c5e40",
       "sourceName": "contracts/Vesting.sol",
       "solcConfig": {
         "version": "0.8.9",

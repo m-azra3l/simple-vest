@@ -4,16 +4,13 @@ import Claim from "@/components/claim/claim";
 import styles from './page.module.css';
 import { useState, useEffect } from 'react';
 import { toast } from "react-toastify";
-import { useRouter } from "next/router";
-import { 
-    shortenAddress,
-    getId,
-    verifyUser } 
-from "@/contexts/contractHelpers";
+import { useRouter, useSearchParams } from "next/navigation";
+import { shortenAddress, getId, verifyUser } from "@/contexts/contractHelpers";
 
 export default function Stakeholder() {
     const router = useRouter();
-    const address = router.query;
+    const params = useSearchParams();
+    const address = params.get('id');
     const [userId, setUserId] = useState(null);
 
     useEffect(() => {

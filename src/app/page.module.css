@@ -127,12 +127,13 @@
   -webkit-box-pack: center;
   -ms-flex-pack: center;
   justify-content: center;
+  padding-left: 15px;
   gap: var(--space-lg);  
 }
 
 .intro div {
   display: -ms-grid;
-  /* display: grid; */
+  display: grid;
   gap: var(--space-sm);
   max-width: var(--content-sm);
 }
@@ -274,6 +275,7 @@
     grid-template-columns: 1fr;
     justify-content: center;
     width: var(--max-width);
+    padding-left: 15px;
     max-width: 320px;    
     margin-top: 70px;
   }

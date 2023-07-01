@@ -8,12 +8,11 @@ import { toast } from "react-toastify";
 export default function Stakeholders({ orgId }) {
     const [users, setUsers] = useState([]);
     const [loadingState, setLoadingState] = useState('');
-    const id = orgId;
 
     useEffect(() => {
         (async () => {
             try {
-                const users = await getOrgStakeholders(id);
+                const users = await getOrgStakeholders(orgId);
                 users.sort((a, b) => b.id - a.id);
                 setUsers(users);
                 setLoadingState('loaded');
@@ -22,15 +21,15 @@ export default function Stakeholders({ orgId }) {
                 console.error(err);
             }
         })();
-    }, [id]);
+    }, [orgId]);
 
     async function handleWhitelist(userId) {
-        try{
+        try {
             const whitelistUser = await whitelist(userId);
-            if(whitelistUser){
+            if (whitelistUser) {
                 toast.success('Success');
             }
-            else{
+            else {
                 toast.error('Error');
             }
         }
@@ -44,45 +43,56 @@ export default function Stakeholders({ orgId }) {
         return (
             <div>
                 <br />
-                <h3 className={styles.accent}>No Stakeholders</h3>
+                <h4 className={styles.accent}>No Stakeholders</h4>
                 <br />
                 <p>Add stakeholders to see stakeholder list</p>
+                <br />
             </div>
         );
     }
     return (
-        <div className={styles.grid}>
-            {users.map((user, i) => (
-                <div className={styles.stakeholder} key={i}>
-                    <div className={styles.progress_text}>
-                        <h3>{shortenAddress(user.address)}</h3>
-                        <p>{user.role}</p>
-                    </div>
-                    <div className={styles.progress_text}>
-                        <small>Vest Start: {user.startTime}</small>
-                        <small>Vest End: {user.endTime}</small>
-                    </div>
-                    <progress max={user.totalToken} value={user.claimedToken}>
-                        {formatPercentage(user.claimedToken / user.totalToken)}
-                    </progress>
-                    <div className={styles.progress_text}>
-                        <small>Claimed Token: {user.claimedToken}</small>
-                        <small>Total Token: {user.totalToken}</small>
-                    </div>
-                    <div className={styles.flex_sm}>
-                        <button type='submit' className={
-                            `${styles.button} 
-                            ${styles.btn} 
-                            ${styles.btn_dark}`}
-                            hidden={user.whitelisted === true}
-                            onClick={ () => handleWhitelist(user.id)}
-                        >
-                            Whitelist <PlusCircleIcon width={20} />
-                        </button>
-                        <h2 hidden={user.whitelisted === false}>Whitelisted</h2>
-                    </div>
+        <>
+            {loadingState === 'loaded' ? (
+                <div className={styles.grid}>
+                    {users.map((user, i) => (
+                        <div className={styles.stakeholder} key={i}>
+                            <div className={styles.progress_text}>
+                                <h3>{shortenAddress(user.address)}</h3>
+                                <p>{user.role}</p>
+                            </div>
+                            <progress max={user.totalToken} value={user.claimedToken}>
+                                {formatPercentage(user.claimedToken / user.totalToken)}
+                            </progress>
+                            <div className={styles.progress_text}>
+                                <small>Claimed Token: {user.claimedToken}</small>
+                                <small>Total Token: {user.totalToken}</small>
+                            </div>
+                            <div className={styles.flex_sm}>
+                                <>
+                                    {user.whitelisted ? (
+                                        <h3>Whitelisted</h3>
+                                    ) : (
+                                        <button type='submit' className={
+                                            `${styles.button} 
+                                    ${styles.btn} 
+                                    ${styles.btn_dark}`}
+                                            onClick={() => handleWhitelist(user.id)}
+                                        >
+                                            Whitelist <PlusCircleIcon width={20} />
+                                        </button>
+                                    )}
+                                </>
+                            </div>
+                        </div>
+                    ))}
                 </div>
-            ))}
-        </div>
+            ) : (
+                <>
+                    <br />
+                    <h5>Loading...</h5>
+                    <br />
+                </>
+            )}
+        </>
     );
 };

@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 import styles from "./page.module.css";
 import Link from "next/link";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
 import { UserPlusIcon } from "@heroicons/react/24/solid";
 import { signUp } from "@/contexts/contractHelpers";

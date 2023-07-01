@@ -25,7 +25,7 @@ async function main() {
   `export const vestingAddress = '${vesting.address}';`
   );
 
-  console.log('Contract ABI and address exported successfully.');
+  console.log('Contract address exported successfully.');
 }
 
 main()
