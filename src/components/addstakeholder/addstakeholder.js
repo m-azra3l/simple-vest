@@ -30,10 +30,10 @@ export default function AddStakeholder({ orgId }) {
     const address = e.target[0].value;
     const email = e.target[1].value;
     const role = e.target[2].value;
-    const endTime = e.target[4].value;
-    // const dateObj = new Date(e.target[4].value);
-    // const endTime = Math.floor(dateObj.getTime() / 1000);
-    // console.log(endTime);
+    // const endTime = e.target[4].value;
+    const dateObj = new Date(e.target[4].value);
+    const endTime = Math.floor(dateObj.getTime() / 1000);
+    console.log(endTime);
     try {
       const add = await addStakeholder(
         address,
