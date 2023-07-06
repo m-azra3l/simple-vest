@@ -97,18 +97,18 @@ export default function AddStakeholder({ orgId }) {
                 className={styles.input}
               />
               <small>Vesting End Date</small>
-              <input
+              {/* <input
                 type="number"
                 placeholder="Duration"
                 required
                 className={styles.input}
-              />
-              {/* <input
+              /> */}
+              <input
               type="date"
               placeholder="Duration"
               required
               className={styles.input}
-            /> */}
+            />
               <div className={styles.flex_sm}>
                 <button className={
                   `${styles.button}
